@@ -11,8 +11,8 @@ tags:
 ---
 
 
-## First Blog
+## 搭建个人博客
 
-这是第一篇博客，先介绍如何搭建个人博客。
+这是第一篇博客，介绍如何利用Github Pages搭建个人博客。
 
-参考[这里](http://www.jianshu.com/p/e68fba58f75c)
+整个搭建的过程主要是参考[这篇博客](http://www.jianshu.com/p/e68fba58f75c)
