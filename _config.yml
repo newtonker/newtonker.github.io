@@ -1,5 +1,5 @@
 # Site settings
-title: NDK blog
+title: newtonker blog
 SEOTitle: newtonker的博客 | newtonker's blog
 header-img: img/post-bg-desk.jpg
 email: newtonker@gmail.com
@@ -12,7 +12,7 @@ github_repo: "https://github.com/newtonker/newtonker.github.io.git" # you code r
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "Goals determine what you going to be!"
-sidebar-avatar: /img/about-BY-gentle.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/about-NDK-gentle.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
