@@ -44,7 +44,7 @@ void setCurrentItemInternal(int item, boolean smoothScroll, boolean always, int 
 
 ```
 
-从上面的代码中可以看出，当首次加载出页面的时候，mFirstLayout为true时，就不会执行动画操作。具体到项目中遇到的实际场景，我认真分析了一下，因为每次RecyclerView数据初次获取，页面初次创建的时候都会导致attach操作，所以会导致首次动画不执行的情况。
+从上面的代码中可以看出，当首次加载出页面的时候，mFirstLayout为true时，就不会执行动画操作。具体到项目中遇到的实际场景：RecyclerView在不滑动的前提下，如果notifyDataSetChanged的时候，只会调用onBindViewHolder，这时并不会调用ViewPager的detach和attach方法。而当每次数据源变化的时候，由于前后两个数据源的getItemId不一致，则会重新调用onCreateViewHolder和onBindViewHolder，这样会调用ViewPager的detach和attach方法，所以会导致问题一中的问题。
 
 #### 解决方案
 其中一个解决方案是按照上面的文章中提到的，由于mFirstLayout是private属性，所以自定义一个ViewPager，然后重写onAttachedToWindow，利用反射修改mFirstLayout的值。参考代码如下：
@@ -69,7 +69,7 @@ protected void onAttachedToWindow() {
 ### 问题二
 
 #### 问题原因
-当ViewPager不可见之后，在另一个页面操作了数据，需要ViewPager切换tab的时候，出现两个tab页个出现一半的情况，这个问题的主要原因是，当ViewPager正在执行动画的时候，如果调用了detachWindow，则会导致动画终止，可能会出现两个tab页同时存在的情况。具体到项目中的场景，当回到viewpager页面的时候，如果正在执行tab切换的行为，又调用了RecyclerView的Adapter的notifyDataSetChanged的方法，可能会导致detachWindow，这样便会终止动画的执行。分析代码如下：
+当ViewPager不可见之后，在另一个页面操作了数据，需要ViewPager切换tab的时候，出现两个tab页个出现一半的情况，这个问题的主要原因是，当ViewPager正在执行动画的时候，如果调用了detachWindow，则会导致动画终止，可能会出现两个tab页同时存在的情况。具体到项目中的场景：第一种case：当回到viewpager页面的时候，onResume时又重新拉取数据源，notify的时候会激活detach的调用。另外一种case：如果正在执行tab切换的行为，滑动了RecyclerView，由于存在复用的情况，不可见的ViewPager会执行detach方法。这两case都有可能可能会导致detachWindow，这样便会终止动画的执行。分析代码如下：
 
 ```java
  @Override
@@ -142,3 +142,6 @@ public void setHasDestroy(boolean hasDestroy) {
 ```java
 ViewCompat.setNestedScrollingEnabled(mBinding.rvList, false);
 ```
+
+## 其他说明
+- RecyclerView多类型的显示采用了[MultiType](https://github.com/drakeet/MultiType)；
